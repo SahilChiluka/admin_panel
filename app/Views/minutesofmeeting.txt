@@ -1,0 +1,63 @@
+Topics:1.Call Event Manager2. Web Api3. Api Integration 5. Environ Server6. Socket Server7. Queue Consumer8 . New Inbound Prototype9. Inbound Prototype
+1. Call Event Manager -Call Event Manager sends api state change request send to state manager are from call        
+event manager- How CEM works  Kafka Proxy-->Socket Server (listen channel events) ---> chat server ---> CEM(checks WSroom name) 
+--> event consumer(checks where to sends )-->(Agent,customer,remote Customer)- C-pass handles recording for web/ondemand.   
+uuid_record command is used for rec in Bridge - In case of external Transfer call get hangup from customer end  
+-It take data from destroy event to save data in logger- If customer disconnect during conference call  -destroy event with 
+parameter conference - CEM also adds data inside Redis
+2. Web Api - It handles calling related events it is in node-4,using restify-Data in Buckets shown in  main screen is 
+send by web api     - Agent recent call history   - preview call count.   - List View,   - CallBack count- Preview clicks 
+event handle by web Api - Web Api have number of api majorly use    - Recent Call History   - Preview Count   - LiveView Count    - Callback Count   - Preview related all Api    - CallBack related all Api   -  Get Dispose   - setLeadDetailedInProcess (client adds details from its side that data is send to here)     - setLeadProcessToken- setCallBack,setDNC,setProcessCallBack all this api is triggered by queue consumer   
+3. Api Integration 
+- Came to picture due to code getting big in web Api -  Uses socket,Is a bull producer,restAPI- Major use :               - The data shown on agents dashboard like:                          - Calltime, loginTime, InboundCallCount,UserSummary- When agent state is on disposeProcess then DisposeProcessApi is called.- Agent selects any dispose type-> the state goes in BullQ producer-> Queue Consumer will receive this data->Calls-> Api based on event.- It also sends Callback Notification/Reminder to Agent triggered by heartBeater service which had state dispose.
+4. Environ Server- It is used to get data of:   - Leadset Data     - Agentscript   - SMS   - Email- When will customer ID will be present   - Callback, log, Preview   - In Manual/Inbound-> Customer ID is 0 as its not present and if present will get the ID from there.   - Sends Notification to Agents screen for Inbound Calls:       Increment/Decrement notification count based on if :             - call gets destroyed            - call in queue            - call missed           - call patched- If new customer comes it will insert the data in leadset - Notification will be send to that particular process only to the ready agents.
+5. Socket Server: Its responsible for all the call related process and services
+6. Queue consumer 
+7. New Inbound Prototype   - When Inbound call made-> lands on PRI-> ESL client-> decides on which instance/proxy the call should be send->kafka proxy  -  8 Inbound prototype- It is called after newBound Prototype service response- It directs to channel_application event directly - It gets multiple information through newInbound Prototype- Flow of Inbound event:   - call->NewInbound->on response->Inbound prototype-> Multiple checks->customer is added in Queue with timer->    -> searches for agent for that customer:
+            - When agent Inbound gets on ready state-> State Management server-> sends -> agentInboundReadyEvent-> Inbound Prototype->            -> Checks if customer is in queue using agents key & customer key in redis queue list-> gets longest waiting customer-> patches call with customer- setInterval is stored in a variable to keep customer in the queue if agent is not found. - When will customer cleared from the redis queue:    - when call get's connect   - when customer cuts - How live monitor v2 shows data in live monitor dashboard   - once customer in queue-> event -> Live monitor service-> shows -> customers in queue on dashboard
+- Environ service sends notification to agent dashboard. - Sticky Inbound:
+  client-> calls its API-> defines on which sticky agent to go-> agent username or CRM id-> if-> CRM id-> gets agent username-> checks agent is ready or not in that queue->if not-> add s in    default call or depends on what customer wants.  - If agent is on ready state-> if no customer in queue-> adds agent in the queue again 
+
+8.  New Inbound Prototype:
+1)	Whenever, an inbound call arrives on the system, it follows a path:
+a.	Call drops on esl client.
+b.	Goes to Kafka proxy
+c.	Goes to New Inbound prototype.
+2)	After this flow, two event occurs:
+a.	Channel_create
+b.	Channel_application
+3)	With this two event a data-object is created simultaneously which has the gateway number and aligned to it other object which has {did, didType, didNumber}.
+4)	When the channel_create event occurs a a command is executed:
+a.	Uuid_transfer<uuid> xml newInboundRouting
+5)	After this command channel application event starts coming.
+6)	XML context named newInboundRouting has the flow written which will tell what should be play next.
+7)	Channel application sends the event to New Inbound Routing prototype and returns currentuid and nexttuid object which will have the uid of the performing operations .
+8)	A command: HGET inbound 9991. This command will do the operations with the help of the object.
+9)	This event will be triggered and goes to New Inbound Prototype. The uids that has been send with event will be use to activate the operations. The uids will be updated where, nextuid becomes current uid and next uid is updated with new uid.
+10)	This flow will be executred frequently until the route_end_stratergy doesn’t become the value of nextuid key.
+11)	Then Inbound Prototype will come into picture.
+
+
+
+Queue Consumer 
+This Service is Bull Queue Producer and Reciever.
+
+This service is responsible when dispose event is called from Api integration.
+
+When recieves event from api integration then insert dispose call data into Mysql then depend on 
+callback/dnc trigger api of web Apis.
+
+It creates summary of calls for logger report.
+
+Its work starts after dispose event it inserts data into bull queue 
+
+Queue consumer transfer data into 
+churn Lead Queue
+ - Makes a lead of Not connected,not reachable call. 
+ - it is used to insert data in mongodb.
+Elastic Queue 
+ - It is used to insert data in mongodb.
+StateManagementQueue
+ - Recieves full call summary ,dispose call summary updates call count detail
+Api Queue Consumer
+ - Api called after call dispose event
