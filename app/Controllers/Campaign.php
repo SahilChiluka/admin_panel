@@ -8,29 +8,18 @@ class Campaign extends BaseController
 {
     public function __construct() {
         $this->model = new Campaigns();
+        $this->users = new Users();
     }
 
-    public function campaignpage() {
-        $pager = service('pager');
+    public function index() {
+        
+        $filterSupervisor = $this->request->getGet('filterSupervisor') ?? null;
+        $filterCampaignName = $this->request->getGet('searchCampaignName') ?? null;
+        $filterClient = $this->request->getGet('searchClient') ?? null;
 
-        $users = new Users();
-        $access_supervisor = $users->where('role',2)->find();
+        $campaigns = $this->model->getFilteredCampaign($filterSupervisor, $filterCampaignName, $filterClient);
+        $access_supervisor = $this->users->getUserByRole(2);
 
-        $filterSupervisor = $this->request->getGet('filterSupervisor');
-        $filterCampaignName = $this->request->getGet('searchCampaignName');
-        $filterClient = $this->request->getGet('searchClient');
-
-        $query = $this->model;
-        if($filterCampaignName) {
-            $query->like('campaign_name', "$filterCampaignName%", 'after');
-        }
-        if($filterClient) {
-            $query->like('client', "$filterClient%", 'after');
-            }
-        if($filterSupervisor) {
-            $query->where('supervisor', $filterSupervisor);
-        }
-        $campaigns = $this->model->paginate(3);
         $data['page'] = 'campaign';
         $data['data'] = ['campaigns' => $campaigns, 'filteraccess' => $access_supervisor];
         $data['pager'] = $this->model->pager;
@@ -43,8 +32,7 @@ class Campaign extends BaseController
     }
 
     public function createcampaign() {
-        $users = new Users();
-        $access_supervisor = $users->where('role',2)->find();
+        $access_supervisor = $this->users->getUserByRole(2);
         // print_r($data);
         $data['page'] = 'createcampaign';
         $data['data'] = ['supervisors'=>$access_supervisor];
@@ -61,30 +49,23 @@ class Campaign extends BaseController
         $campaignNameExists = $this->model->where('campaign_name',$campaignName)->first();
         // print_r($campaignNameExists['campaign_name']);
 
-        if ($campaignNameExists) {
+        if ($this->model->isCampaignExists($campaignName)) {
             session()->setFlashData('error', 'Campaign Name Exists');
             return redirect()->to('/createcampaignpage');
-        } else {
+        } 
 
-            $data = $this->model->save([
-                'campaign_name' => $campaignName,
-                'description' => $campaignDescription,
-                'client' => $client,
-                'supervisor' => $supervisor
-            ]);
-
-            return redirect()->to('/campaign');
-        }
+        $this->model->createCampaign($campignName, $campaignDescription, $client, $supervisor);
+        return redirect()->to('/campaign');
+        
     }
 
     public function geteditcampaign($id) {
-        $supervisor = $this->model->where('camp_id',$id)->first();
+        $campaign = $this->model->getCampaignById($id);
 
-        $users = new Users();
-        $access_supervisor = $users->where('role',2)->find();
+        $access_supervisor = $this->users->getUserByRole(2);
 
         $data['page'] = 'editcampaign';
-        $data['data'] = ['supervisors'=>$supervisor, 'campaigns'=>$access_supervisor];
+        $data['data'] = ['supervisors' => $campaign, 'campaigns' => $access_supervisor];
         echo view('template', $data);
         // print_r($user);
         // return view('header').view('editcampaign',['supervisors'=>$supervisor, 'campaigns'=>$data]).view('footer');
@@ -96,17 +77,12 @@ class Campaign extends BaseController
         $client = $this->request->getPost('client');
         $supervisor = $this->request->getPost('supervisor');
         // print_r($id);
-        $this->model->update($id, [
-            'campaign_name' => $campaignName,
-            'description' => $campaignDescription,
-            'client' => $client,
-            'supervisor' => $supervisor
-        ]);
+        $this->model->updateCampaign($id, $campignName, $campaignDescription, $client, $supervisor);
         return redirect()->to('/campaign');
     }
 
     public function deletecampaign($id) {
-        $this->model->delete($id);
+        $this->model->deleteCampaign($id);
         return redirect()->to('/campaign');
     }
 }

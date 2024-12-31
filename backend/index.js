@@ -26,7 +26,6 @@ io.on('connection', (socket) => {
     })
     socket.on('send-message', (message) => {
         console.log(message);
-        const collection = await 
         io.emit('new-message', message);
     });
 });

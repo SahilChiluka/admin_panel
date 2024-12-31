@@ -24,7 +24,7 @@ $routes->post('/updateuser/(:any)', 'Home::updateuser/$1');
 $routes->get('/delete/(:any)', 'Home::delete/$1');
 
 // campaigns
-$routes->get('/campaign','Campaign::campaignpage');
+$routes->get('/campaign','Campaign::index');
 $routes->get('/createcampaignpage','Campaign::createcampaign');
 $routes->post('/addcampaign','Campaign::addcampaign');
 $routes->get('/geteditcampaign/(:any)','Campaign::geteditcampaign/$1');

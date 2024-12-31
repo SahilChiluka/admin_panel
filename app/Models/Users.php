@@ -44,17 +44,58 @@ class Users extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getFilteredUsers($filterRole, $filterName, $filterEmail) {
-        $query = $this;
+    public function getFilteredUsers($filterRole = null, $filterName = null, $filterEmail = null) {
+        if ($filterRole) {
+            $this->where('role', $filterRole);
+        }
         if ($filterName) {
-            $query->like('username', "$filterName%", 'after');
+            $this->like('username', $filterName);
         }
         if ($filterEmail) {
-            $query->like('email', "$filterEmail%", 'after');
+            $this->like('email', $filterEmail);
         }
-        if ($filterRole) {
-            $query->where('role', $filterRole);
-        }
-        return $query->paginate(3);
+        return $this->paginate(3);
     }
+
+    public function isUsernameExists($username) {
+        return $this->where('username', $username)->first() !== null;
+    }
+
+    public function isEmailExists($email) {
+        return $this->where('email', $email)->first() !== null;
+    }
+
+    public function createUser ($username, $email, $password, $role) {
+        $this->save([
+            'username' => $username,
+            'email' => $email,
+            'password' => $password,
+            'role' => $role
+        ]);
+    }
+
+    public function getUserById($id) {
+        return $this->where('user_id', $id)->first();
+    }
+
+    public function updateUser ($id, $username, $email, $role) {
+        $this->update($id, [
+            'username' => $username,
+            'email' => $email,
+            'role' => $role
+        ]);
+    }
+
+    public function deleteUser ($id) {
+        $this->delete($id);
+    }
+
+    public function getUserByEmail($email) {
+        return $this->where('email', $email)->first();
+    }
+
+    public function getUserByRole($role) {
+        return $this->where('role', $role)->find();
+    }
+
 }
