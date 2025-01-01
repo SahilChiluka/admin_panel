@@ -9,13 +9,13 @@
 <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Operations</a></li>
-            <li class="breadcrumb-item"><a href="/campaign">Campaign</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('Campaign/index') ?>">Campaign</a></li>
             <li class="breadcrumb-item"><a href="#">Edit</a></li>
         </ol>
     </nav>
     <div>
     <h3>Edit Campaign</h3>
-    <form action="/editcampaign/<?= $supervisors['camp_id'] ?>" method="post">
+    <form action="<?= base_url('Campaign/editcampaign/').$supervisors['camp_id'] ?>" method="post">
     <div class="mb-3">
             <label for="campaignname" class="form-label">Campaign Name</label>
             <input type="text" class="form-control-sm" name="campaignname" value="<?= $supervisors['campaign_name']?>">

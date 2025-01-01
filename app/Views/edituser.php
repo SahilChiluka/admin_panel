@@ -9,13 +9,13 @@
 <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Operations</a></li>
-            <li class="breadcrumb-item"><a href="/users">Users</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('Home/userpage') ?>">Users</a></li>
             <li class="breadcrumb-item"><a href="#">Edit</a></li>
         </ol>
     </nav>
     <div>
     <h3>Edit User</h3>
-    <form action="/updateuser/<?= $user['user_id'] ?>" method="post">
+    <form action="<?= base_url('Home/updateuser/'.$user['user_id']) ?>" method="post">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control-sm" name="username" value="<?= $user['username'] ?>" placeholder="Enter Username">

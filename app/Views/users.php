@@ -9,12 +9,12 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Operations</a></li>
-            <li class="breadcrumb-item"><a href="/users">Users</a></li>
-            <li class="breadcrumb-item"><a href="/createuserpage">+</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('Home/userpage') ?>">Users</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('Home/createuserpage'); ?>">+</a></li>
         </ol>
     </nav>
     <div class="container mt-5">
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
         Filter
     </button>
         <h4>Users List</h4>
@@ -48,16 +48,18 @@
 
     
 <!-- Filter -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+
+<!-- // bs 5 modal  -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
     <div class="modal-content">
+      <!-- Modal Header -->
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Filter</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <h4 class="modal-title">Filter</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
-        <div class="modal-body">
+      <!-- Modal body -->
+      <div class="modal-body">
             <form action="/users">
                 <input type="search" name="searchName" placeholder="Search By Name">
                 <br>
@@ -76,6 +78,7 @@
             <button type="submit" class="btn btn-primary">Filter</button>
         </div>
       </form>
+    </div>
     </div>
   </div>
 </div>

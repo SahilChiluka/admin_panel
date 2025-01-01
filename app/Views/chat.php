@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
 <style>
-    body{
-        background-color: #f4f7f6;
-        margin-top:20px;
-    }
     .card {
         background: #fff;
         transition: .5s;

@@ -9,13 +9,13 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Operations</a></li>
-            <li class="breadcrumb-item"><a href="/users">Users</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('Home/userpage') ?>">Users</a></li><li class="breadcrumb-item"><a href="/users">Users</a></li>
             <li class="breadcrumb-item"><a href="#">+</a></li>
         </ol>
     </nav>
     <div>
     <h3>Create User</h3>
-    <form action="/adduser" method="post">
+    <form action="<?= base_url('Home/adduser') ?>" method="post">
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control-sm" name="username" placeholder="Enter Username">

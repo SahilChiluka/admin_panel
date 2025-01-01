@@ -46,7 +46,7 @@ class Campaign extends BaseController
         $client = $this->request->getPost('client');
         $supervisor = $this->request->getPost('supervisor');
 
-        $campaignNameExists = $this->model->where('campaign_name',$campaignName)->first();
+        // $campaignNameExists = $this->model->where('campaign_name',$campaignName)->first();
         // print_r($campaignNameExists['campaign_name']);
 
         if ($this->model->isCampaignExists($campaignName)) {
@@ -54,7 +54,7 @@ class Campaign extends BaseController
             return redirect()->to('/createcampaignpage');
         } 
 
-        $this->model->createCampaign($campignName, $campaignDescription, $client, $supervisor);
+        $this->model->createCampaign($campaignName, $campaignDescription, $client, $supervisor);
         return redirect()->to('/campaign');
         
     }
@@ -77,7 +77,7 @@ class Campaign extends BaseController
         $client = $this->request->getPost('client');
         $supervisor = $this->request->getPost('supervisor');
         // print_r($id);
-        $this->model->updateCampaign($id, $campignName, $campaignDescription, $client, $supervisor);
+        $this->model->updateCampaign($id, $campaignName, $campaignDescription, $client, $supervisor);
         return redirect()->to('/campaign');
     }
 

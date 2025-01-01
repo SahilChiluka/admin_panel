@@ -61,7 +61,7 @@ class Campaigns extends Model
         return $this->where('campaign_name', $campignName)->first() !== null;
     }
 
-    public function createCampaign($campignName, $campaignDescription, $client, $supervisor) {
+    public function createCampaign($campaignName, $campaignDescription, $client, $supervisor) {
         $this->save([
             'campaign_name' => $campaignName,
             'description' => $campaignDescription,
@@ -74,7 +74,7 @@ class Campaigns extends Model
         return $this->where('camp_id', $id)->first();
     }
 
-    public function updateCampaign($id, $campignName, $campaignDescription, $client, $supervisor) {
+    public function updateCampaign($id, $campaignName, $campaignDescription, $client, $supervisor) {
         $this->update($id, [
             'campaign_name' => $campaignName,
             'description' => $campaignDescription,

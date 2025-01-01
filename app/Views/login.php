@@ -71,7 +71,7 @@
         <h3 style="color:red; text-align:center;">
             <?php echo session()->getFlashdata("error"); ?>
         </h3>
-        <form action="/loginuser" method="post">
+        <form action="<?= base_url('Home/loginuser') ?>" method="post">
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required> 
             <label for="password">Password:</label>
