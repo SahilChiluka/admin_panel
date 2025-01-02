@@ -65,7 +65,6 @@ io.on('connection', (socket) => {
             message: message,
             timestamp: new Date()
         };
-
         try {
             await db.collection('messages').insertOne(chat);
             io.emit('new-message', `${socket.username}: ${message}`);
@@ -80,19 +79,18 @@ io.on('connection', (socket) => {
 });
 
 app.get('/get-messages', async (req, res) => {
-  try {
-      const messages = await db.collection('messages').find().toArray();
-      res.json(messages);
-  } catch (err) {
-      console.error("Failed to fetch messages", err);
-      res.status(500).send("Error fetching messages");
-  }
+    try {
+        const messages = await db.collection('messages').find().toArray();
+        res.json(messages);
+    } catch (err) {
+        console.error("Failed to fetch messages", err);
+        res.status(500).send("Error fetching messages");
+    }
 });
 
 server.listen(3000, () => {
   console.log('server running at http://localhost:3000');
 });
-
 
 
 // {

@@ -55,21 +55,21 @@ class Home extends BaseController {
 
         if ($this->model->isUsernameExists($username)) {
             session()->setFlashData('username', 'Username already exists');
-            return redirect()->to('/createuserpage');
+            return redirect()->to(base_url('Home/createuserpage'));
         }
 
         if ($this->model->isEmailExists($email)) {
             session()->setFlashData('email', 'Email already exists');
-            return redirect()->to('/createuserpage');
+            return redirect()->to(base_url('Home/createuserpage'));
         }
 
         if ($password !== $confirm_password) {
             session()->setFlashData('password', 'Password and Confirm Password do not match');
-            return redirect()->to('/createuserpage');
+            return redirect()->to(base_url('Home/createuserpage'));
         }
 
         $this->model->createUser ($username, $email, $password, $role);
-        return redirect()->to('/users');
+        return redirect()->to(base_url('Home/userpage'));
     }
 
     public function editpage($id) {
@@ -87,12 +87,12 @@ class Home extends BaseController {
         $role = $this->request->getPost('role');
 
         $this->model->updateUser ($id, $username, $email, $role);
-        return redirect()->to('/users');
+        return redirect()->to(base_url('Home/userpage'));
     }
 
     public function delete($id) {
-        $this->model->deleteUser ($id);
-        return redirect()->to('/users');
+        $this->model->deleteUser($id);
+        return redirect()->to(base_url('Home/userpage'));
     }
 
     public function login() {
@@ -123,7 +123,7 @@ class Home extends BaseController {
             'role' => $user['role'],
         ]);
 
-        return redirect()->to('/');
+        return redirect()->to(base_url('/'));
     }
 
     public function logout() {

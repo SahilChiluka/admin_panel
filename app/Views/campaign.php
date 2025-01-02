@@ -36,7 +36,7 @@
                         <td><?php echo ($campaign['client']); ?></td>
                         <td><?php echo ($campaign['supervisor']); ?></td>
                         <td>
-                            <a href="/geteditcampaign/<?php echo $campaign['camp_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="<?= base_url('Campaign/geteditcampaign/').$campaign['camp_id']; ?>" class="btn btn-warning btn-sm">Edit</a>
                             <a href="#" delete_id="<?php echo $campaign['camp_id']; ?>" class="deleteCampaign btn btn-danger btn-sm">Delete</a>
                         </td>
                     </tr>
@@ -89,7 +89,7 @@
             const delete_id = delbutton.getAttribute('delete_id');
             console.log(delete_id);
             if (confirm('Are you sure you want to delete this campaign?')) {
-                window.location.href = `/deletecampaign/${delete_id}`; 
+                window.location.href = `<?= base_url('Campaign/deletecampaign/').$campaign['camp_id']; ?>`; 
             }
         });
     });

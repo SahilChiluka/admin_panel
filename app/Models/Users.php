@@ -44,6 +44,10 @@ class Users extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    public function getAllUsers() {
+        return $this->findAll();
+    }
+
     public function getFilteredUsers($filterRole = null, $filterName = null, $filterEmail = null) {
         if ($filterRole) {
             $this->where('role', $filterRole);

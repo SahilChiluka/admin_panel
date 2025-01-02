@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="<?= base_url('assets/js/jquery_min.js') ?>"></script>
+    <script src="<?= base_url('assets/js/socketCDN.js') ?>"></script>
 <style>
         /* Add your CSS styles here */
         .card {
@@ -276,48 +276,15 @@
                         <input type="text" class="form-control" placeholder="Search...">
                     </div>
                     <ul class="list-unstyled chat-list mt-2 mb-0">
-                        <li class="clearfix">
+                        <?php foreach($users as $user) { ?>
+                        <li class="clearfix users" username="<?= $user['username'] ?>">
                             <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
                             <div class="about">
-                                <div class="name">Vincent Porter</div>
+                                <div class="name"><?= $user['username'] ?></div>
                                 <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
                             </div>
                         </li>
-                        <li class="clearfix active">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Aiden Chavez</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Mike Thomas</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>                                    
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Christian Kelly</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Monica Ward</div>
-                                <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                            </div>
-                        </li>
-                        <li class="clearfix">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                            <div class="about">
-                                <div class="name">Dean Henry</div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>
-                            </div>
-                        </li>
+                        <?php } ?>
                     </ul>
                     </div>
                     <div class="chat">
@@ -326,10 +293,10 @@
                             <div class="row">
                             <div class="col-lg-6">
                                 <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
                                 </a>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0">Aiden Chavez</h6>
+                                    <h6 class="m-b-0">Vincent Porter</h6>
                                     <small>Last seen: 2 hours ago</small>
                                 </div>
                             </div>
@@ -361,7 +328,7 @@
     <script>
         $(document).ready(function() {
             const socket = io.connect('http://localhost:3000');
-            const username = "<?= session('name') ?>"; // Replace with actual username
+            const username = "<?= session('name') ?>"; 
             socket.emit('username', username);
 
             $('#send-button').click(function() {
@@ -375,5 +342,15 @@
             socket.on('new-message', (message) => {
                 $('#messages').append(`<p>${message}</p>`);
             });
-        });
+
+            const users = document.querySelectorAll('.users');
+                users.forEach((user) => {
+                    user.addEventListener('click', () => {
+                        const username = user.getAttribute('username');
+                        console.log(username);
+                        socket.emit('userclicked', username);
+                    });
+                });
+            });
+
     </script>
