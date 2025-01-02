@@ -9,7 +9,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Operations</a></li>
-            <li class="breadcrumb-item"><a href="<?= base_url('Home/userpage') ?>">Users</a></li><li class="breadcrumb-item"><a href="/users">Users</a></li>
+            <li class="breadcrumb-item"><a href="<?= base_url('Home/userpage') ?>">Users</a></li>
             <li class="breadcrumb-item"><a href="#">+</a></li>
         </ol>
     </nav>

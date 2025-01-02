@@ -59,7 +59,7 @@
       </div>
       <!-- Modal body -->
       <div class="modal-body">
-      <form action="/campaign">
+      <form action="<?= base_url('Campaign/index') ?>">
         <input type="search" name="searchCampaignName" placeholder="Search By Campaign Name" size="50" value="<?php isset($campaign['campaign_name']) ?>">
         <br>
         <br>

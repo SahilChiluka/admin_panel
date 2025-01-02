@@ -17,8 +17,9 @@ const connectDb = async () => {
     await client.db("admin").command({ ping: 1 });
     console.log("You successfully connected to MongoDB!");
     const db = client.db("chat");
-    const collection = db.collection("chats");
-    return collection;
+    // const collection = db.collection("chats");
+    // return collection;
+    return db;
   } finally {
     await client.close();
   }

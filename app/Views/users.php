@@ -60,7 +60,7 @@
       </div>
       <!-- Modal body -->
       <div class="modal-body">
-            <form action="/users">
+            <form action="<?= base_url('Home/userpage') ?>">
                 <input type="search" name="searchName" placeholder="Search By Name">
                 <br>
                 <br>
