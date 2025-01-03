@@ -89,7 +89,7 @@
             const delete_id = delbutton.getAttribute('delete_id');
             console.log(delete_id);
             if (confirm('Are you sure you want to delete this campaign?')) {
-                window.location.href = `<?= base_url('Campaign/deletecampaign/').$campaign['camp_id']; ?>`; 
+                window.location.href = `<?= base_url('Campaign/deletecampaign/')?>${delete_id}`; 
             }
         });
     });

@@ -270,20 +270,22 @@
                     <div id="plist" class="people-list">
                         <!-- User list here -->
                         <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text"><i class="fa fa-search"></i></span>
+                        <!-- <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                            </div> -->
+                        <!-- <input type="text" class="form-control" placeholder="Search..."> -->
                         </div>
-                        <input type="text" class="form-control" placeholder="Search...">
-                    </div>
                     <ul class="list-unstyled chat-list mt-2 mb-0">
                         <?php foreach($users as $user) { ?>
-                        <li class="clearfix users" username="<?= $user['username'] ?>">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                            <div class="about">
-                                <div class="name"><?= $user['username'] ?></div>
-                                <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
-                            </div>
-                        </li>
+                            <?php if($user['username'] !== session('name')) { ?>
+                            <li class="clearfix users" username="<?= $user['username'] ?>">
+                                <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
+                                <div class="about">
+                                    <div class="name"><?= $user['username'] ?></div>
+                                    <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
+                                </div>
+                            </li>
+                            <?php } ?>
                         <?php } ?>
                     </ul>
                     </div>
@@ -296,16 +298,15 @@
                                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
                                 </a>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0">Vincent Porter</h6>
-                                    <small>Last seen: 2 hours ago</small>
+                                    <h6 class="m-b-0 receiver">Vincent Porter</h6>
                                 </div>
                             </div>
-                            <div class="col-lg-6 hidden-sm text-right">
+                            <!-- <div class="col-lg-6 hidden-sm text-right">
                                 <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
                                 <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
                                 <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
                                 <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
-                            </div>
+                            </div> -->
                         </div>
                         </div>
                         <div class="chat-history" id="messages">
@@ -325,32 +326,32 @@
         </div>
     </div>
 
-    <script>
-        $(document).ready(function() {
-            const socket = io.connect('http://localhost:3000');
-            const username = "<?= session('name') ?>"; 
-            socket.emit('username', username);
+<script>
+    const socket = io.connect('http://localhost:3000');
+    const username = '<?= session('name') ?>';
+    socket.emit('username', username);
 
-            $('#send-button').click(function() {
-                const message = $('#chat-input').val();
-                if (message.trim() !== "") {
-                    socket.emit('send-message', message);
-                    $('#chat-input').val('');
-                }
-            });
+    document.getElementById('send-button').addEventListener('click', function() {
+        const message = document.getElementById('chat-input').value;
+        if (message.trim() !== "") {
+            socket.emit('send-message', message);
+            document.getElementById('chat-input').value = '';
+        }
+    });
 
-            socket.on('new-message', (message) => {
-                $('#messages').append(`<p>${message}</p>`);
-            });
+    socket.on('new-message', (message) => {
+        const messagesElement = document.getElementById('messages');
+        messagesElement.innerHTML += `<p>${message}</p>`;
+    });
+    const users = document.querySelectorAll('.users');
+    users.forEach((user) => {
+        user.addEventListener('click', () => {
+            const receiver = user.getAttribute('username');
+            console.log(receiver);
+            document.querySelector('.receiver').innerHTML = receiver;
+            socket.emit('joinRoom', { sender: username  , receiver });
+            // socket.emit('userclicked', username);
+        });
+    });
 
-            const users = document.querySelectorAll('.users');
-                users.forEach((user) => {
-                    user.addEventListener('click', () => {
-                        const username = user.getAttribute('username');
-                        console.log(username);
-                        socket.emit('userclicked', username);
-                    });
-                });
-            });
-
-    </script>
+</script>

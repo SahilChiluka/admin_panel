@@ -53,25 +53,31 @@ io.on('connection', (socket) => {
 
 
     // console.log('a user connected:', socket.id);
-
     socket.on('username', (username) => {
         socket.username = username;
         console.log(`${username} connected`);
     });
 
-    socket.on('send-message', async (message) => {
-        const chat = {
-            sender: socket.username,
-            message: message,
-            timestamp: new Date()
-        };
-        try {
-            await db.collection('messages').insertOne(chat);
-            io.emit('new-message', `${socket.username}: ${message}`);
-        } catch (err) {
-            console.error("Failed to save message", err);
-        }
+    socket.on('joinRoom', async ({ sender, receiver }) => {
+        console.log('Hello');
+        const room = [sender, receiver].sort().join('_');
+        socket.join(room);
+        console.log(`${sender} joined room: ${room}`);
     });
+
+    // socket.on('send-message', async (message) => {
+    //     const chat = {
+    //         sender: socket.username,
+    //         message: message,
+    //         timestamp: new Date()
+    //     };
+    //     try {
+    //         await db.collection('messages').insertOne(chat);
+    //         io.emit('new-message', `${socket.username}: ${message}`);
+    //     } catch (err) {
+    //         console.error("Failed to save message", err);
+    //     }
+    // });
 
     socket.on('disconnect', () => {
         console.log(socket.username, 'disconnected',);

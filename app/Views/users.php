@@ -90,7 +90,7 @@
             const delete_id = delbutton.getAttribute('delete_id');
             console.log(delete_id);
             if (confirm('Are you sure you want to delete this user?')) {
-                window.location.href = `<?= base_url('Home/delete/').$user['user_id']; ?>`; 
+                window.location.href = `<?= base_url('Home/delete/')?>${delete_id}`; 
             }
         });
     });
