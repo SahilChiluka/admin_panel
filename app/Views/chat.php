@@ -281,8 +281,7 @@
                             <li class="clearfix users" username="<?= $user['username'] ?>">
                                 <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
                                 <div class="about">
-                                    <div class="name"><?= $user['username'] ?></div>
-                                    <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
+                                    <div class="name"><?= $user['username'] ?></div>                                           
                                 </div>
                             </li>
                             <?php } ?>
@@ -298,7 +297,7 @@
                                     <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
                                 </a>
                                 <div class="chat-about">
-                                    <h6 class="m-b-0 receiver">Vincent Porter</h6>
+                                    <h6 class="m-b-0 reciever">Vincent Porter</h6>
                                 </div>
                             </div>
                             <!-- <div class="col-lg-6 hidden-sm text-right">
@@ -330,28 +329,42 @@
     const socket = io.connect('http://localhost:3000');
     const username = '<?= session('name') ?>';
     socket.emit('username', username);
+    let reciever;
+
+    const users = document.querySelectorAll('.users');
+    users.forEach((user) => {
+        user.addEventListener('click', () => {
+            reciever = user.getAttribute('username');
+            console.log(reciever);
+            document.querySelector('.reciever').innerHTML = reciever;
+            socket.emit('joinRoom', { sender: username, reciever });
+            return reciever;
+            // socket.emit('userclicked', username);
+        });
+    });
+
+    socket.on('previousMessages',(messages) => {
+        const chatHistory = document.getElementById('messages');
+        messages.forEach((message) => {
+            const chatMessage = document.createElement('div');
+            chatMessage.classList.add('chat-message');
+            chatMessage.innerHTML = `<p>${message.sender}: ${message.message}</p>`;
+            chatHistory.appendChild(chatMessage);
+        });
+    })
 
     document.getElementById('send-button').addEventListener('click', function() {
         const message = document.getElementById('chat-input').value;
         if (message.trim() !== "") {
-            socket.emit('send-message', message);
+            socket.emit('send-message', {sender:username, reciever:reciever, message:message});
             document.getElementById('chat-input').value = '';
         }
     });
 
     socket.on('new-message', (message) => {
+        console.log(message);
         const messagesElement = document.getElementById('messages');
         messagesElement.innerHTML += `<p>${message}</p>`;
-    });
-    const users = document.querySelectorAll('.users');
-    users.forEach((user) => {
-        user.addEventListener('click', () => {
-            const receiver = user.getAttribute('username');
-            console.log(receiver);
-            document.querySelector('.receiver').innerHTML = receiver;
-            socket.emit('joinRoom', { sender: username  , receiver });
-            // socket.emit('userclicked', username);
-        });
     });
 
 </script>

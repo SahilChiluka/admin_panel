@@ -58,41 +58,56 @@ io.on('connection', (socket) => {
         console.log(`${username} connected`);
     });
 
-    socket.on('joinRoom', async ({ sender, receiver }) => {
-        console.log('Hello');
-        const room = [sender, receiver].sort().join('_');
+    socket.on('joinRoom', async ({ sender, reciever }) => {
+        const room = [sender, reciever].sort().join('_');
         socket.join(room);
         console.log(`${sender} joined room: ${room}`);
+
+        try {
+            const messages = await db.collection('messages').find({
+                $or: [
+                        // {sender,reciever}, 
+                        {sender: sender}, {reciever: sender},
+                    ]}
+            ).toArray();
+            console.log(messages);     
+            socket.emit('previousMessages',messages);
+        } catch (err) {
+            console.log('Error fetching messages:', err);
+        }
     });
 
-    // socket.on('send-message', async (message) => {
-    //     const chat = {
-    //         sender: socket.username,
-    //         message: message,
-    //         timestamp: new Date()
-    //     };
-    //     try {
-    //         await db.collection('messages').insertOne(chat);
-    //         io.emit('new-message', `${socket.username}: ${message}`);
-    //     } catch (err) {
-    //         console.error("Failed to save message", err);
-    //     }
-    // });
+    socket.on('send-message', async ({sender, reciever, message}) => {
+        const room = [sender, reciever].sort().join('_');
+        const chat = {
+            sender: sender,
+            receiver: reciever,
+            message: message,
+            timestamp: new Date()
+        };
+        try {
+            console.log(chat);
+            await db.collection('messages').insertOne(chat);
+            io.to(room).emit('new-message', `${sender}: ${message}`);
+        } catch (err) {
+            console.error("Failed to save message", err);
+        }
+    });
 
     socket.on('disconnect', () => {
         console.log(socket.username, 'disconnected',);
     });
 });
 
-app.get('/get-messages', async (req, res) => {
-    try {
-        const messages = await db.collection('messages').find().toArray();
-        res.json(messages);
-    } catch (err) {
-        console.error("Failed to fetch messages", err);
-        res.status(500).send("Error fetching messages");
-    }
-});
+// app.get('/get-messages', async (req, res) => {
+//     try {
+//         const messages = await db.collection('messages').find().toArray();
+//         res.json(messages);
+//     } catch (err) {
+//         console.error("Failed to fetch messages", err);
+//         res.status(500).send("Error fetching messages");
+//     }
+// });
 
 server.listen(3000, () => {
   console.log('server running at http://localhost:3000');
