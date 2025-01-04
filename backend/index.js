@@ -1,125 +1,107 @@
-const express = require('express');
-const cors = require('cors');
-const { createServer } = require('http');
-const { Server } = require('socket.io');
-const connectDb = require('./db/db.js');
-const bodyParser = require('body-parser');
-const { MongoClient } = require('mongodb');
+const express = require("express");
+const cors = require("cors");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+const { MongoClient } = require("mongodb");
+const bodyParser = require("body-parser");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:8080",
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 
+// MongoDB setup
 const uri = "mongodb://localhost:27017/";
 const client = new MongoClient(uri);
-
 let db;
 
 async function connectToMongo() {
-    try {
-        await client.connect();
-        db = client.db('chatApp');
-        console.log("Connected to MongoDB");
-    } catch (err) {
-        console.error("Failed to connect to MongoDB", err);
-    }
+  try {
+    await client.connect();
+    db = client.db("chatApp");
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("Failed to connect to MongoDB", err);
+  }
 }
 
 connectToMongo();
 
-// const db = connectDb();
-
 const server = createServer(app);
-
 const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:8080',
-        credentials: true,
-      },
+  cors: {
+    origin: "http://localhost:8080",
+    credentials: true,
+  },
 });
 
-app.get('/', (req, res) => {
-  res.send('<h1>Hello world</h1>');
+io.on("connection", (socket) => {
+  socket.on("username", (username) => {
+    socket.username = username;
+    console.log(`${username} connected`);
+  });
+
+  socket.on("joinRoom", async ({ sender, receiver }) => {
+    // Create unique room name
+    const room = [sender, receiver].sort().join("_");
+    console.log(`${sender} joined room ${room}`);
+    // Leave previous rooms and join new room
+    socket.rooms.forEach((r) => {
+      if (r !== socket.id) socket.leave(r);
+    });
+    socket.join(room);
+
+    try {
+      // Fetch previous messages
+      const messages = await db
+        .collection("messages")
+        .find({
+          $or: [
+            { sender, receiver },
+            { sender: receiver, receiver: sender },
+          ],
+        })
+        .sort({ timestamp: 1 })
+        .toArray();
+
+      socket.emit("previousMessages", messages);
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+    }
+  });
+
+  socket.on("send-message", async ({ sender, receiver, message }) => {
+    try {
+      const room = [sender, receiver].sort().join("_");
+
+      const chat = {
+        sender,
+        receiver,
+        message,
+        timestamp: new Date(),
+      };
+
+      // Save to database
+      console.log(chat);
+      await db.collection("messages").insertOne(chat);
+
+      // Send to room
+      io.to(room).emit("new-message", chat);
+    } catch (err) {
+      console.error("Failed to save/send message:", err);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log(`${socket.username} disconnected`);
+  });
 });
 
-io.on('connection', (socket) => {
-    // socket.on('username',(username) => {
-    //   console.log(username, 'is connected');
-    // })
-    // socket.on('send-message', (message) => {
-    //     console.log(message);
-    //     io.emit('new-message', message);
-    // });
-
-
-    // console.log('a user connected:', socket.id);
-    socket.on('username', (username) => {
-        socket.username = username;
-        console.log(`${username} connected`);
-    });
-
-    socket.on('joinRoom', async ({ sender, reciever }) => {
-        const room = [sender, reciever].sort().join('_');
-        socket.join(room);
-        console.log(`${sender} joined room: ${room}`);
-
-        try {
-            const messages = await db.collection('messages').find({
-                $or: [
-                        // {sender,reciever}, 
-                        {sender: sender}, {reciever: sender},
-                    ]}
-            ).toArray();
-            console.log(messages);     
-            socket.emit('previousMessages',messages);
-        } catch (err) {
-            console.log('Error fetching messages:', err);
-        }
-    });
-
-    socket.on('send-message', async ({sender, reciever, message}) => {
-        const room = [sender, reciever].sort().join('_');
-        const chat = {
-            sender: sender,
-            receiver: reciever,
-            message: message,
-            timestamp: new Date()
-        };
-        try {
-            console.log(chat);
-            await db.collection('messages').insertOne(chat);
-            io.to(room).emit('new-message', `${sender}: ${message}`);
-        } catch (err) {
-            console.error("Failed to save message", err);
-        }
-    });
-
-    socket.on('disconnect', () => {
-        console.log(socket.username, 'disconnected',);
-    });
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-// app.get('/get-messages', async (req, res) => {
-//     try {
-//         const messages = await db.collection('messages').find().toArray();
-//         res.json(messages);
-//     } catch (err) {
-//         console.error("Failed to fetch messages", err);
-//         res.status(500).send("Error fetching messages");
-//     }
-// });
-
-server.listen(3000, () => {
-  console.log('server running at http://localhost:3000');
-});
-
-
-// {
-//     members: [ user_id1, user_id2 ],
-//     messages: [
-//         { author: user_2, body: 'Hi what's up' },
-//         { author: user_1, body: 'Nothing out here :(' },
-//         { author: user_2, body: 'Whanna ask some question on stackoverflow' },
-//         { author: user_1, body: 'Okay, lets go' }
-//     ]
-// }
