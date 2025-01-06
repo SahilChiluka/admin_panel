@@ -14,7 +14,6 @@ app.use(
 );
 app.use(bodyParser.json());
 
-// MongoDB setup
 const uri = "mongodb://localhost:27017/";
 const client = new MongoClient(uri);
 let db;
@@ -46,17 +45,11 @@ io.on("connection", (socket) => {
   });
 
   socket.on("joinRoom", async ({ sender, receiver }) => {
-    // Create unique room name
     const room = [sender, receiver].sort().join("_");
     console.log(`${sender} joined room ${room}`);
-    // Leave previous rooms and join new room
-    socket.rooms.forEach((r) => {
-      if (r !== socket.id) socket.leave(r);
-    });
     socket.join(room);
 
     try {
-      // Fetch previous messages
       const messages = await db
         .collection("messages")
         .find({
@@ -67,7 +60,7 @@ io.on("connection", (socket) => {
         })
         .sort({ timestamp: 1 })
         .toArray();
-
+        console.log(messages);
       socket.emit("previousMessages", messages);
     } catch (err) {
       console.error("Error fetching messages:", err);
@@ -85,11 +78,9 @@ io.on("connection", (socket) => {
         timestamp: new Date(),
       };
 
-      // Save to database
       console.log(chat);
       await db.collection("messages").insertOne(chat);
 
-      // Send to room
       io.to(room).emit("new-message", chat);
     } catch (err) {
       console.error("Failed to save/send message:", err);
