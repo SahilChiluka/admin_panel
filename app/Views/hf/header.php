@@ -33,9 +33,18 @@
 <div class="d-flex gap-4 align-items-center justify-content-center">
     <a class="link" href="<?= base_url('/') ?>">Dashboard</a>
     <a class="link" href="<?= base_url('/') ?>">Live</a>
-    <a class="link" href="<?= base_url('/') ?>">Reports</a>
+
+    <div class="report-menu">
+      <a class="link" href="#">Report</a>
+      <ul class="report-list">
+        <li><a href="<?= base_url('Report/index') ?>">OverAll Report</a></li>
+        <li><a href="<?= base_url('Report/hourly') ?>">Hourly Report</a></li>
+      </ul>
+    </div>
+
     <a class="link" href="<?= base_url('/') ?>">Conversations</a>
     <a class="link" href="<?= base_url('/') ?>">Contacts</a>
+
     <div class="operations-menu">
         <a class="link" href="#">Operations</a>
         <ul class="operations-list">
@@ -44,5 +53,6 @@
             <li><a href="<?= base_url('ChatController/Chat') ?>">Chat</a></li>
         </ul>
     </div>
+    
     <a class="link" href="<?= base_url('/') ?>">Advanced Settings</a>
 </div>

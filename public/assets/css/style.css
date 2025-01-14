@@ -27,3 +27,15 @@ ul {
     display: block;
     position: fixed;
 }
+
+.report-list {
+    display: none;
+    margin-top: 2px;
+    margin-left: -35px;
+    color: black;
+}
+
+.report-menu:hover .report-list {
+    display: block;
+    position: fixed;
+}
