@@ -38,7 +38,9 @@
       <a class="link" href="#">Report</a>
       <ul class="report-list">
         <li><a href="<?= base_url('Report/index') ?>">OverAll Report</a></li>
-        <li><a href="<?= base_url('Report/hourly') ?>">Hourly Report</a></li>
+        <li><a href="<?= base_url('Report/sqlhourly') ?>">SQL Hourly Report</a></li>
+        <li><a href="<?= base_url('Report/mongoHourly') ?>">Mongo Hourly Report</a></li>
+        <li><a href="<?= base_url('Report/elasticHourly') ?>">Elastic Hourly Report</a></li>
       </ul>
     </div>
 

@@ -1,5 +1,8 @@
 <div class="container">
+    <div class="d-flex gap-3">
         <h4>Calls</h4>
+        <a href="<?= base_url('/Report/downloadOverall') ?>">Download</a>
+    </div>
         <table class="table table-bordered">
             <thead class="thead-light" style="font-size: 12px;">
                 <tr>
@@ -43,9 +46,12 @@
                         <td><?php echo $call['disposeTime']; ?></td>
                         <td><?php echo $call['disposeType']; ?></td>
                         <td><?php echo $call['disposeName']; ?></td>
-                        <td><?php echo $call['datetime']; ?></td>
+                        <td><?php echo date('Y-m-d H:i:s',timestamp: strtotime($call['datetime'])); ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
         </table>
+        <div class="d-flex justify-content-center">
+            <?= $pager->links() ?>
+        </div>
     </div>

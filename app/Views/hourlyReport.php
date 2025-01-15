@@ -1,5 +1,8 @@
 <div class="container">
-        <h4>Hourly Calls</h4>
+<div class="d-flex gap-3">
+        <h4>Hourly Calls Report</h4>
+        <a href="<?= base_url('/Report/downloadSqlHourlyReport') ?>">Download</a>
+    </div>
         <table class="table table-bordered">
             <thead class="thead-light" style="font-size: 12px;">
                 <tr>
@@ -19,8 +22,8 @@
                 <?php foreach($hourlyCalls as $calls) { ?>
                     <tr>
                         <td><?= date('Y-m-d', timestamp: strtotime($calls['date'])) ?></td>
-                        <td><?= date('h', timestamp: strtotime($calls['hour'])) . "-" . date('h', timestamp: strtotime($calls['hour'])) + 1 ?></td>
-                        <td><?= gmdate('H:m:s',$calls['total_calls']); ?></td> 
+                        <td><?= date('H', timestamp: strtotime($calls['hour'])) . "-" . date('H', timestamp: strtotime($calls['hour'])) + 1 ?></td>
+                        <td><?= $calls['total_calls']; ?></td> 
                         <td><?= gmdate('H:m:s',$calls['total_ringing_time']); ?></td>
                         <td><?= gmdate('H:m:s',$calls['total_call_time']); ?></td> 
                         <td><?= gmdate('H:m:s',$calls['total_hold_time']); ?></td>
