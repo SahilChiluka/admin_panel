@@ -37,10 +37,24 @@
     <div class="report-menu">
       <a class="link" href="#">Report</a>
       <ul class="report-list">
-        <li><a href="<?= base_url('Report/index') ?>">OverAll Report</a></li>
-        <li><a href="<?= base_url('Report/sqlhourly') ?>">SQL Hourly Report</a></li>
-        <li><a href="<?= base_url('Report/mongoHourly') ?>">Mongo Hourly Report</a></li>
-        <li><a href="<?= base_url('Report/elasticHourly') ?>">Elastic Hourly Report</a></li>
+        <div class="nested-menu">
+         <li><a href="#">Logger</a>
+            <ul class="nested-list">
+              <li><a href="<?= base_url('Report/index/sql') ?>">SQL Logger Report</a></li>
+              <li><a href="<?= base_url('Report/index/mongo') ?>">Mongo Logger Report</a></li>
+              <li><a href="<?= base_url('Report/index/elastic') ?>">Elastic Logger Report</a></li>
+            </ul>
+         </li>
+        </div>
+        <div class="nested-menu">
+          <li><a href="#">Hourly</a>
+            <ul class="nested-list">
+              <li><a href="<?= base_url('Report/hourly/sql') ?>">SQL Hourly Report</a></li>
+              <li><a href="<?= base_url('Report/hourly/mongo') ?>">Mongo Hourly Report</a></li>
+              <li><a href="<?= base_url('Report/hourly/elastic') ?>">Elastic Hourly Report</a></li>
+            </ul>
+          </li>
+        </div>
       </ul>
     </div>
 
