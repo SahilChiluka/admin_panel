@@ -15,6 +15,18 @@ class Report extends BaseController {
         return $response;
     }
 
+    public function postCurlRequest($url, $data)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        $response = curl_exec($ch);
+        return $response;
+    }
+
     public function index($id) {
         $pager=service('pager');
 
@@ -28,7 +40,7 @@ class Report extends BaseController {
 
         $response = $this->curlRequest($url);
 
-        $page= (int) (($this->request->getVar('page') !== null) ? $this->request->getVar('page') : 1) - 1; //limit  ie ?page=1 would be set to page=0;
+        $page= $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1;; //limit  ie ?page=1 would be set to page=0;
         $perPage =  5;
         $total = count($response);
 
@@ -120,8 +132,7 @@ class Report extends BaseController {
         header("Content-Description: File Transfer");
         header("Content-Disposition: attachment; filename=$filename");
         header("Content-Type: application/csv; ");
-
-        // file creation 
+ 
         $file = fopen('php://output', 'w');
 
         for($i=0; $i < 1; $i++) {
@@ -142,6 +153,40 @@ class Report extends BaseController {
         } 
 
         fclose($file);
+    }
+
+    public function filter($id) {
+        $pager=service('pager');
+        
+        $url = 'http://localhost:3000/mysql/filter';
+
+        $agentName = $this->request->getVar('agentName');
+        $campaignName = $this->request->getVar('campaignName');
+        $processName = $this->request->getVar('processName');
+
+        $data = [];
+
+        !empty($agentName) ? $data['agentName'] = $agentName : null;
+        !empty($campaignName) ? $data['campaignName'] = $campaignName : null;
+        !empty($processName) ? $data['processName'] = $processName : null;
+
+        $response = $this->postCurlRequest($url, $data);
+        $data = json_decode($response, true);
+        // print_r($data);
+
+        $page= $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; //limit  ie ?page=1 would be set to page=0;
+        $perPage =  8;
+        $total = count($data);
+
+        $perPageData = array_slice($data, $page*$perPage, $perPage);
+
+        $pager->makeLinks($page,$perPage,$total);
+        // echo $page;
+        $data['page'] = 'reports';
+        $data['data'] = ['calls' => $perPageData];
+        $data['pager'] = $pager;
+        $data['nid'] = $id;
+        echo view('template',$data); 
     }
 
 }

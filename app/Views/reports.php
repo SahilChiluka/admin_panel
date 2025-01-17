@@ -2,6 +2,9 @@
     <div class="d-flex gap-3">
         <h4>Calls</h4>
         <a href="<?= base_url('/Report/downloadLogger/').$nid ?>">Download</a>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+            Filter
+        </button>
     </div>
         <table class="table table-bordered">
             <thead class="thead-light" style="font-size: 12px;">
@@ -55,3 +58,35 @@
             <?= $pager->links() ?>
         </div>
     </div>
+
+
+<!-- Filter -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Filter</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+            <form action="<?= base_url('Report/filter/').$nid ?>" method="POST">
+                <input type="search" name="agentName" placeholder="Search By Agent Name" size="30">
+                <br>
+                <br>
+                <input type="search" name="campaignName" placeholder="Search By Campaign Name" size="30">
+                <br>
+                <br>
+                <input type="search" name="processName" placeholder="Search By Process Name" size="30">
+                <br>
+                <br>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+      </form>
+    </div>
+    </div>
+  </div>
+</div>
