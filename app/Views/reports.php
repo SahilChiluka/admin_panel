@@ -71,7 +71,7 @@
       </div>
       <!-- Modal body -->
       <div class="modal-body">
-            <form action="<?= base_url('Report/filter/').$nid ?>" method="POST">
+            <form action="<?= base_url('Report/index/').$nid ?>" method="GET">
                 <input type="search" name="agentName" placeholder="Search By Agent Name" size="30">
                 <br>
                 <br>
@@ -81,6 +81,23 @@
                 <input type="search" name="processName" placeholder="Search By Process Name" size="30">
                 <br>
                 <br>
+                <input type="search" name="leadsetId" placeholder="Search By Leadset ID" size="30">
+                <br>
+                <br>
+                <select name="callType" id="">
+                    <option value="">Select Call Type</option>
+                    <?php for ($i=0; $i<count($callType); $i++) { ?>
+                        <option value="<?= $callType[$i]; ?>"><?= $callType[$i]; ?> </option>
+                    <?php } ?>
+                </select>
+                <br>
+                <br>
+                <select name="disposeType" id="">
+                    <option value="">Select Dispose Type</option>
+                    <?php for ($i=0; $i<count($disposeType); $i++) { ?>
+                        <option value="<?= $disposeType[$i]; ?>"><?= $disposeType[$i]; ?> </option>
+                    <?php } ?>
+                </select>
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Filter</button>
