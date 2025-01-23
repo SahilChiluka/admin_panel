@@ -45,7 +45,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("joinRoom", async ({ sender, receiver }) => {
-    const room = [sender, receiver].join("_");
+    const room = [sender, receiver].sort().join("_");
     console.log(`${sender} joined room ${room}`);
     socket.join(room);
 

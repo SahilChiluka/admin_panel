@@ -38,7 +38,7 @@ class Report extends BaseController {
         }
 
         $response = $this->curlRequest($url);
-        // print_r($response);
+        //print_r($response);
         $callType = [];
         $disposeType = [];
         foreach($response as $data) {
@@ -60,9 +60,8 @@ class Report extends BaseController {
         $calltype = $this->request->getVar('callType');
         $disposetype = $this->request->getVar('disposeType');
 
-        $data = [];
         if($agentName || $campaignName || $processName || $leadsetId || $calltype || $disposetype) {
-            // $data = [];
+            $data = [];
             !empty($agentName) ? $data['agentName'] = $agentName : null;
             !empty($campaignName) ? $data['campaignName'] = $campaignName : null;
             !empty($processName) ? $data['processName'] = $processName : null;
@@ -86,7 +85,7 @@ class Report extends BaseController {
         $page= $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; //limit  ie ?page=1 would be set to page=0;
         $perPage =  5;
         $total = count($response);
-        $perPageData = array_slice($response, $page*$perPage, $perPage);
+        $perPageData = array_slice($response, ($page-1)*$perPage, $perPage);
         $pager->makeLinks($page,$perPage,$total);
         // echo $page;
 
@@ -95,7 +94,6 @@ class Report extends BaseController {
         $data['pager'] = $pager;
         $data['nid'] = $id;
         echo view('template',$data);
-        // print_r($data);
 
     }
 
@@ -199,43 +197,5 @@ class Report extends BaseController {
         fclose($file);
     }
 
-    // public function filter($id) {
-    //     $pager=service('pager');
-        
-    //     $url = 'http://localhost:3000/mysql/filter';
-
-    //     $agentName = $this->request->getVar('agentName');
-    //     $campaignName = $this->request->getVar('campaignName');
-    //     $processName = $this->request->getVar('processName');
-    //     $leadsetId = $this->request->getVar('leadsetId');
-    //     $callType = $this->request->getVar('callType');
-    //     $disposeType = $this->request->getVar('disposeType');
-
-    //     $data = [];
-
-    //     !empty($agentName) ? $data['agentName'] = $agentName : null;
-    //     !empty($campaignName) ? $data['campaignName'] = $campaignName : null;
-    //     !empty($processName) ? $data['processName'] = $processName : null;
-    //     !empty($leadsetId) ? $data['leadsetId'] = $leadsetId : null;
-    //     !empty($callType) ? $data['callType'] = $callType : null;
-    //     !empty($disposeType) ? $data['disposeType'] = $disposeType : null;
-
-    //     $response = $this->postCurlRequest($url, $data);
-    //     $data = json_decode($response, true);
-    //     // print_r($data);
-
-    //     $page= $this->request->getVar('page') ? (int)$this->request->getVar('page') : 1; //limit  ie ?page=1 would be set to page=0;
-    //     $perPage =  5;
-    //     $total = count($data);
-
-    //     $perPageData = array_slice($data, $page*$perPage, $perPage);
-    //     $pager->makeLinks($page,$perPage,$total);
-    //     // echo $page;
-    //     $data['page'] = 'reports';
-    //     $data['data'] = ['calls' => $perPageData, 'callType' => $callType, 'disposeType' => $disposeType];
-    //     $data['pager'] = $pager;
-    //     $data['nid'] = $id;
-    //     echo view('template',$data); 
-    // }
 
 }
