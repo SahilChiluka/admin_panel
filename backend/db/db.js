@@ -1,28 +1,28 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+// const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const uri = "mongodb://localhost:27017/chat";
+// const uri = "mongodb://localhost:27017/chat";
 
-const client = new MongoClient(uri,  {
-        serverApi: {
-            version: ServerApiVersion.v1,
-            strict: true,
-            deprecationErrors: true,
-        }
-    }
-);
+// const client = new MongoClient(uri,  {
+//         serverApi: {
+//             version: ServerApiVersion.v1,
+//             strict: true,
+//             deprecationErrors: true,
+//         }
+//     }
+// );
 
-const connectDb = async () => {
-  try {
-    await client.connect();
-    await client.db("admin").command({ ping: 1 });
-    console.log("You successfully connected to MongoDB!");
-    const db = client.db("chat");
-    // const collection = db.collection("chats");
-    // return collection;
-    return db;
-  } finally {
-    await client.close();
-  }
-}
+// const connectDb = async () => {
+//   try {
+//     await client.connect();
+//     await client.db("admin").command({ ping: 1 });
+//     console.log("You successfully connected to MongoDB!");
+//     const db = client.db("chat");
+//     // const collection = db.collection("chats");
+//     // return collection;
+//     return db;
+//   } finally {
+//     await client.close();
+//   }
+// }
 
-module.exports = connectDb;
+// module.exports = connectDb;

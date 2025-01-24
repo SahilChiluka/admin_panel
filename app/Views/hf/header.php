@@ -31,7 +31,7 @@
 </nav>
 
 <div class="d-flex gap-4 align-items-center justify-content-center">
-    <a class="link" href="<?= base_url('/') ?>">Dashboard</a>
+    <a class="link" href="<?= base_url('StatesManager/index') ?>">Dashboard</a>
     <a class="link" href="<?= base_url('/') ?>">Live</a>
 
     <div class="report-menu">
